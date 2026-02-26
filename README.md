@@ -1,36 +1,32 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🍽️ DigiTab - Digital POS & Restaurant Management System
 
-## Getting Started
+DigiTab, restoran ve kafeler için geliştirilmiş, masa sipariş süreçlerini dijitalleştiren kapsamlı bir **Adisyon ve Yönetim Sistemi**dir. Kağıt adisyon karmaşasını ortadan kaldırarak garson, mutfak ve kasa arasındaki iletişimi hızlandırır.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## ✨ Ana Özellikler
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- 🪑 **Masa Yönetimi:** Masaların doluluk oranlarını, sipariş sürelerini ve hesap durumlarını anlık olarak izleyin.
+- 📝 **Sipariş Takibi:** Garsonların tablet/telefon üzerinden hızlıca sipariş almasını ve mutfağa iletmesini sağlar.
+- 🍔 **Dijital Menü Entegrasyonu:** Ürün kategorileri, fiyatlandırma ve stok durumlarını kolayca yönetin.
+- 🧾 **Hızlı Adisyon:** Tek tıkla hesap dökümü oluşturma, parçalı ödeme alma ve dijital fatura kesme.
+- 📊 **Raporlama:** Günlük ciro, en çok satan ürünler ve yoğun saat analizleri.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🏗️ Sistem Mimarisi
 
-## Learn More
+Sistem, düşük gecikme süresi ve veri tutarlılığı odaklı inşa edilmiştir:
 
-To learn more about Next.js, take a look at the following resources:
+- **Frontend:** React.js & TypeScript (Responsive tasarım ile tablet uyumlu).
+- **Backend:** Node.js / Express (Sipariş kuyruk yönetimi).
+- **Database:** MongoDB / PostgreSQL (Anlık sipariş ve işlem geçmişi kaydı).
+- **Real-time:** Socket.io (Mutfak ekranına anlık sipariş düşmesi için).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🚀 Kurulum
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Depoyu klonlayın:
+   ```bash
+   git clone [https://github.com/FatihAksoyEEE/DigiTab.git](https://github.com/FatihAksoyEEE/DigiTab.git)
