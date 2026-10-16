@@ -1,32 +1,59 @@
-# 🍽️ DigiTab - Digital POS & Restaurant Management System
+# DigiTab POS
 
-DigiTab, restoran ve kafeler için geliştirilmiş, masa sipariş süreçlerini dijitalleştiren kapsamlı bir **Adisyon ve Yönetim Sistemi**dir. Kağıt adisyon karmaşasını ortadan kaldırarak garson, mutfak ve kasa arasındaki iletişimi hızlandırır.
+Restoran ve kafeler için yerel ağda çalışan adisyon sistemi. Garsonlar siparişi telefondan alır, kasa ekranı anında güncellenir.
 
----
+![DigiTab POS](promo/01-tanitim.png)
 
-## ✨ Ana Özellikler
+## Özellikler
 
-- 🪑 **Masa Yönetimi:** Masaların doluluk oranlarını, sipariş sürelerini ve hesap durumlarını anlık olarak izleyin.
-- 📝 **Sipariş Takibi:** Garsonların tablet/telefon üzerinden hızlıca sipariş almasını ve mutfağa iletmesini sağlar.
-- 🍔 **Dijital Menü Entegrasyonu:** Ürün kategorileri, fiyatlandırma ve stok durumlarını kolayca yönetin.
-- 🧾 **Hızlı Adisyon:** Tek tıkla hesap dökümü oluşturma, parçalı ödeme alma ve dijital fatura kesme.
-- 📊 **Raporlama:** Günlük ciro, en çok satan ürünler ve yoğun saat analizleri.
+- **Kasa paneli:** Masaların dolu/boş durumu, açık adisyonlar, sipariş notları, adet düzenleme ve masa kapatma.
+- **Garson ekranı:** Uygulama kurmadan, telefon tarayıcısından QR kodla erişilir. Kategorili menü, sepet ve sipariş notu içerir.
+- **Gerçek zamanlı:** Socket.io ile tüm ekranlar anında senkronize olur.
+- **Menü ve ayarlar:** Kategori/ürün yönetimi, masa sayısı, restoran bilgileri ve tek tıkla yedekleme (son 20 yedek saklanır).
+- **Açık/koyu tema, Türkçe/İngilizce.**
+- **İnternet gerekmez:** Veriler kasa bilgisayarındaki SQLite dosyasında tutulur.
 
----
+## Teknoloji
 
-## 🏗️ Sistem Mimarisi
+Next.js 16 (App Router) + özel Node sunucusu (`server.ts`), Socket.io, SQLite (better-sqlite3), Tailwind CSS 4. Masaüstü sürümü Electron ile paketlenir.
 
-Sistem, düşük gecikme süresi ve veri tutarlılığı odaklı inşa edilmiştir:
+## Kurulum
 
-- **Frontend:** React.js & TypeScript (Responsive tasarım ile tablet uyumlu).
-- **Backend:** Node.js / Express (Sipariş kuyruk yönetimi).
-- **Database:** MongoDB / PostgreSQL (Anlık sipariş ve işlem geçmişi kaydı).
-- **Real-time:** Socket.io (Mutfak ekranına anlık sipariş düşmesi için).
+Node.js 20 veya üzeri gerekir.
 
----
+```bash
+npm install
+npm run dev            # http://localhost:3000
+```
 
-## 🚀 Kurulum
+Sunucu açıldığında terminalde garson telefonlarının kullanacağı yerel ağ adresi yazılır. Aynı adres ve QR kodu **Ayarlar** sayfasında da bulunur.
 
-1. Depoyu klonlayın:
-   ```bash
-   git clone [https://github.com/FatihAksoyEEE/DigiTab.git](https://github.com/FatihAksoyEEE/DigiTab.git)
+| Komut | Açıklama |
+|---|---|
+| `npm run dev` | Geliştirme sunucusu |
+| `npm run build` / `npm start` | Üretim derlemesi ve sunucusu |
+| `npm run electron:dev` | Masaüstü uygulamasını geliştirme modunda açar |
+| `npm run dist` | macOS DMG paketi üretir (`dist/`) |
+| `npm run lint` / `npm run typecheck` | Kod denetimi |
+
+## Güvenlik modeli
+
+- **Kasa paneli, menü, ayarlar ve yedekleme** yalnızca kasa bilgisayarından (`localhost`) kullanılabilir. Ağdaki diğer cihazlar `/dashboard` adresine girdiğinde garson ekranına yönlendirilir ve yönetim işlemleri sunucu tarafından reddedilir.
+- **Garson cihazları** yalnızca sipariş verebilir. Fiyatlar istemciden alınmaz, her zaman menüden okunur.
+- Tüm socket olayları sunucuda doğrulanır (kimlik, adet, fiyat ve metin uzunluğu). Başka web sitelerinden açılan WebSocket bağlantıları reddedilir.
+- Uygulamada kullanıcı girişi yoktur; sistemi yalnızca güvendiğiniz bir yerel ağda çalıştırın.
+
+## Proje yapısı
+
+```
+server.ts                 HTTP + Socket.io sunucusu (tüm veri değiştiren işlemler)
+main.js                   Electron ana süreci
+src/app/actions.ts        Salt okunur sunucu fonksiyonları
+src/app/dashboard/        Kasa paneli, menü ve ayarlar
+src/app/waiter/           Garson ekranı
+src/components/           Ortak bileşenler (AppShell, tema/dil düğmeleri)
+src/lib/                  Veritabanı, socket istemcisi, tipler, çeviriler
+promo/                    Tanıtım görselleri ve videosu
+```
+
+Veritabanı geliştirmede proje kökündeki `sqlite.db` dosyasıdır. Masaüstü uygulamasında ise macOS kullanıcı veri klasöründe tutulur. Geçmiş siparişlerde kullanılan ürünler silindiğinde arşivlenir, böylece eski adisyonlar bozulmaz.

@@ -1,16 +1,25 @@
 {
   "name": "billing_system",
   "version": "0.1.0",
-  "private": true,
+  "description": "DigiTab POS System",
+  "author": "DigiTab",
+  "main": "main.js",
   "scripts": {
-    "dev": "nodemon server.ts",
+    "dev": "tsx watch server.ts",
     "build": "next build",
-    "start": "NODE_ENV=production ts-node server.ts",
-    "lint": "eslint"
+    "start": "NODE_ENV=production tsx server.ts",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "electron:dev": "concurrently \"npm run dev\" \"wait-on http://localhost:3000 && electron .\"",
+    "electron:build:server": "node build-electron.mjs",
+    "pack": "npm run build && npm run electron:build:server && electron-builder --dir && npm rebuild better-sqlite3",
+    "dist": "npm run build && npm run electron:build:server && electron-builder && npm rebuild better-sqlite3"
   },
   "dependencies": {
-    "better-sqlite3": "^12.5.0",
+    "better-sqlite3": "^12.9.0",
+    "lucide-react": "^1.8.0",
     "next": "16.0.10",
+    "next-themes": "^0.4.6",
     "qrcode.react": "^4.2.0",
     "react": "19.2.1",
     "react-dom": "19.2.1",
@@ -23,11 +32,68 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "concurrently": "^9.2.1",
+    "electron": "^41.2.1",
+    "electron-builder": "^26.8.1",
+    "esbuild": "^0.28.0",
     "eslint": "^9",
     "eslint-config-next": "16.0.10",
-    "nodemon": "^3.1.11",
     "tailwindcss": "^4",
-    "ts-node": "^10.9.2",
-    "typescript": "^5"
+    "tsx": "^4.21.0",
+    "typescript": "^5",
+    "wait-on": "^9.0.5"
+  },
+  "build": {
+    "appId": "com.digitab.pos",
+    "productName": "DigiTab POS",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "server.js",
+      "next.config.mjs",
+      "package.json",
+      ".next/**/*",
+      "!.next/cache{,/**/*}",
+      "!.next/dev{,/**/*}",
+      "!.next/types{,/**/*}"
+    ],
+    "asar": true,
+    "asarUnpack": [
+      "**/node_modules/better-sqlite3/**/*"
+    ],
+    "mac": {
+      "target": "dmg",
+      "category": "public.app-category.business",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false
+    },
+    "dmg": {
+      "title": "DigiTab POS Kurulum",
+      "contents": [
+        {
+          "x": 410,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        },
+        {
+          "x": 130,
+          "y": 150,
+          "type": "file"
+        }
+      ],
+      "window": {
+        "width": 540,
+        "height": 380
+      }
+    }
+  },
+  "allowScripts": {
+    "better-sqlite3@12.9.0": true,
+    "electron@41.2.1": true,
+    "esbuild@0.28.0": true,
+    "esbuild@0.27.7": true
   }
 }

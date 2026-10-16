@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+:root {
+    --background: #f8fafc;
+    --foreground: #0f172a;
+    --surface: #ffffff;
+    --surface-secondary: #f1f5f9;
+    --surface-hover: #e2e8f0;
+    --border-color: #e2e8f0;
+    --sidebar-bg: #ffffff;
+    --card-bg: rgba(241, 245, 249, 0.6);
+    --card-border: rgba(203, 213, 225, 0.5);
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    --input-bg: #ffffff;
+    --input-border: #cbd5e1;
+    --table-free-bg: rgba(241, 245, 249, 0.8);
+    --table-free-border: rgba(203, 213, 225, 0.5);
+    --table-occupied-bg: rgba(254, 226, 226, 0.5);
+    --table-occupied-border: rgba(252, 165, 165, 0.5);
+    --header-bg: #ffffff;
+    --order-panel-bg: #f8fafc;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+.dark {
+    --background: #0b1120;
+    --foreground: #e2e8f0;
+    --surface: #111b33;
+    --surface-secondary: #0f1729;
+    --surface-hover: #1e293b;
+    --border-color: #1e293b;
+    --sidebar-bg: #0a0f1e;
+    --card-bg: rgba(30, 41, 59, 0.3);
+    --card-border: rgba(51, 65, 85, 0.5);
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --input-bg: rgba(15, 23, 42, 0.5);
+    --input-border: #334155;
+    --table-free-bg: rgba(30, 41, 59, 0.4);
+    --table-free-border: rgba(51, 65, 85, 0.5);
+    --table-occupied-bg: rgba(159, 18, 57, 0.15);
+    --table-occupied-border: rgba(244, 63, 94, 0.4);
+    --header-bg: #0b1120;
+    --order-panel-bg: #0f1729;
+}
+
+@theme {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+}
+
+@layer components {
+    .card {
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+    }
+
+    .field {
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        background: var(--input-bg);
+        border: 1px solid var(--input-border);
+        color: var(--text-primary);
+    }
+}
