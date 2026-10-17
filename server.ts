@@ -256,6 +256,11 @@ app.prepare().then(() => {
         });
     });
 
+    server.on("error", (err: NodeJS.ErrnoException) => {
+        console.error(err.code === "EADDRINUSE" ? `Port ${PORT} kullanımda. Başka bir DigiTab penceresi açık olabilir.` : err);
+        process.exit(1);
+    });
+
     server.listen(PORT, "0.0.0.0", () => {
         console.log(`> Hazır: http://localhost:${PORT}`);
         const addresses = getLanAddresses();

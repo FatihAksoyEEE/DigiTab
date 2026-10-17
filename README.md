@@ -4,6 +4,15 @@ Restoran ve kafeler için yerel ağda çalışan adisyon sistemi. Garsonlar sipa
 
 ![DigiTab POS](promo/01-tanitim.png)
 
+## İndir ve kur
+
+Kurulum için terminal veya programlama bilgisi gerekmez.
+
+1. **[Son sürümü indirin](https://github.com/FatihAksoyEEE/DigiTab/releases/latest)**. Windows için `.exe`, Mac için `.dmg` dosyasını seçin.
+2. Dosyayı çift tıklayıp kurun. Kurulumda çıkabilecek güvenlik uyarılarının nasıl geçileceği indirme sayfasında adım adım anlatılıyor.
+3. Uygulamayı açın, güvenlik duvarı sorarsa **İzin Ver**'i seçin.
+4. Garsonlar, **Ayarlar** sayfasındaki QR kodu aynı Wi-Fi'daki telefonlarıyla okutarak bağlanır.
+
 ## Özellikler
 
 - **Kasa paneli:** Masaların dolu/boş durumu, açık adisyonlar, sipariş notları, adet düzenleme ve masa kapatma.
@@ -17,7 +26,7 @@ Restoran ve kafeler için yerel ağda çalışan adisyon sistemi. Garsonlar sipa
 
 Next.js 16 (App Router) + özel Node sunucusu (`server.ts`), Socket.io, SQLite (better-sqlite3), Tailwind CSS 4. Masaüstü sürümü Electron ile paketlenir.
 
-## Kurulum
+## Geliştirme
 
 Node.js 20 veya üzeri gerekir.
 
@@ -33,7 +42,7 @@ Sunucu açıldığında terminalde garson telefonlarının kullanacağı yerel a
 | `npm run dev` | Geliştirme sunucusu |
 | `npm run build` / `npm start` | Üretim derlemesi ve sunucusu |
 | `npm run electron:dev` | Masaüstü uygulamasını geliştirme modunda açar |
-| `npm run dist` | macOS DMG paketi üretir (`dist/`) |
+| `npm run dist` | Bu bilgisayarın işletim sistemi için kurulum dosyası üretir (`dist/`) |
 | `npm run lint` / `npm run typecheck` | Kod denetimi |
 
 ## Güvenlik modeli
@@ -56,4 +65,14 @@ src/lib/                  Veritabanı, socket istemcisi, tipler, çeviriler
 promo/                    Tanıtım görselleri ve videosu
 ```
 
-Veritabanı geliştirmede proje kökündeki `sqlite.db` dosyasıdır. Masaüstü uygulamasında ise macOS kullanıcı veri klasöründe tutulur. Geçmiş siparişlerde kullanılan ürünler silindiğinde arşivlenir, böylece eski adisyonlar bozulmaz.
+Veritabanı geliştirmede proje kökündeki `sqlite.db` dosyasıdır. Masaüstü uygulamasında ise işletim sisteminin kullanıcı veri klasöründe tutulur. Geçmiş siparişlerde kullanılan ürünler silindiğinde arşivlenir, böylece eski adisyonlar bozulmaz.
+
+## Yeni sürüm yayınlama
+
+`package.json` içindeki `version` alanını artırın, ardından aynı numarayla bir etiket gönderin:
+
+```bash
+git tag v1.0.1 && git push origin v1.0.1
+```
+
+GitHub Actions, macOS (Apple Silicon ve Intel) ile Windows kurulum dosyalarını derleyip [Releases](https://github.com/FatihAksoyEEE/DigiTab/releases) sayfasında yayınlar.

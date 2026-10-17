@@ -78,6 +78,7 @@ export default function SettingsClient({ settings, tableCount, waiterUrl }: { se
                             <h3 className="font-bold text-lg flex items-center gap-2">🔗 {t.waiterAccess}</h3>
                             <p className="text-sm mb-4" style={{ color: "var(--text-secondary)" }}>{t.waiterAccessDesc}</p>
                             <div className="px-4 py-2 bg-amber-500/10 border border-amber-500/30 rounded-lg text-amber-600 dark:text-amber-300 text-sm font-mono">{waiterUrl}</div>
+                            <p className="text-xs mt-3 max-w-md" style={{ color: "var(--text-muted)" }}>💡 {t.waiterHelp}</p>
                         </div>
                         <div className="bg-white p-3 rounded-xl">
                             <QRCodeSVG value={waiterUrl} size={140} />

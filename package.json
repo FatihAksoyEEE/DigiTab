@@ -1,8 +1,8 @@
 {
   "name": "billing_system",
-  "version": "0.1.0",
-  "description": "DigiTab POS System",
-  "author": "DigiTab",
+  "version": "1.0.0",
+  "description": "Restoran ve kafeler için yerel ağda çalışan adisyon sistemi",
+  "author": "Fatih Aksoy",
   "main": "main.js",
   "scripts": {
     "dev": "tsx watch server.ts",
@@ -64,13 +64,22 @@
       "**/node_modules/better-sqlite3/**/*"
     ],
     "mac": {
-      "target": "dmg",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        }
+      ],
       "category": "public.app-category.business",
-      "hardenedRuntime": true,
-      "gatekeeperAssess": false
+      "hardenedRuntime": false,
+      "gatekeeperAssess": false,
+      "identity": "-"
     },
     "dmg": {
-      "title": "DigiTab POS Kurulum",
+      "title": "DigiTab POS",
       "contents": [
         {
           "x": 410,
@@ -88,6 +97,26 @@
         "width": 540,
         "height": 380
       }
+    },
+    "artifactName": "DigiTab-POS-${version}-${os}-${arch}.${ext}",
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "createDesktopShortcut": "always",
+      "createStartMenuShortcut": true,
+      "shortcutName": "DigiTab POS",
+      "runAfterFinish": true,
+      "deleteAppDataOnUninstall": false
     }
   },
   "allowScripts": {
