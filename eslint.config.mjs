@@ -14,6 +14,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Derleme çıktıları: server.ts'den üretilen sunucu ve kurulum dosyaları
+    "server.js",
+    "dist/**",
   ]),
 ]);
 

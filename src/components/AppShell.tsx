@@ -1,12 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { BookOpen, LayoutGrid, Settings } from "lucide-react";
+import { BookOpen, ChefHat, LayoutGrid, Settings, Wallet } from "lucide-react";
 import ThemeLangToggle from "./ThemeLangToggle";
 
 const NAV = [
     { href: "/dashboard", icon: LayoutGrid },
     { href: "/dashboard/menu", icon: BookOpen },
+    { href: "/dashboard/stations", icon: ChefHat },
+    { href: "/dashboard/sales", icon: Wallet },
     { href: "/dashboard/settings", icon: Settings },
 ];
 
@@ -15,7 +17,7 @@ export default function AppShell({ active, headerExtra, children }: { active: st
     return (
         <div className="min-h-screen flex" style={{ background: "var(--background)", color: "var(--text-primary)" }}>
             <aside className="w-16 flex flex-col items-center py-4 gap-6" style={{ background: "var(--sidebar-bg)", borderRight: "1px solid var(--border-color)" }}>
-                <Link href="/" className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center font-bold text-lg text-white">D</Link>
+                <Link href="/" className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center font-bold text-lg text-accent-fg">D</Link>
                 {NAV.map(({ href, icon: Icon }) => (
                     <Link key={href} href={href} className="p-3 rounded-xl hover:opacity-80 transition-opacity"
                         style={href === active ? { background: "var(--surface-hover)" } : undefined}>

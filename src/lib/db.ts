@@ -76,40 +76,87 @@ function setup(db: Database.Database) {
     FOREIGN KEY (order_id) REFERENCES orders(id)
   );
 
+  CREATE TABLE IF NOT EXISTS stations (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL UNIQUE
+  );
+
+  -- Garsonun tek seferde gönderdiği sipariş; istasyon ekranında bir fiş olarak görünür
+  CREATE TABLE IF NOT EXISTS order_batches (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    order_id INTEGER NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (order_id) REFERENCES orders(id)
+  );
+
+  -- Satış defteri: masa kapatılırken adisyon olduğu gibi kopyalanır. Ürün adı, fiyat ve masa numarası
+  -- o anki haliyle saklanır; menü veya masa sayısı sonradan değişse de geçmiş raporlar bozulmaz.
+  CREATE TABLE IF NOT EXISTS sales (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    order_id INTEGER,
+    table_no INTEGER NOT NULL,
+    total REAL NOT NULL,
+    paid_amount REAL NOT NULL,
+    payment_method TEXT NOT NULL,
+    closed_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
+
+  CREATE TABLE IF NOT EXISTS sale_items (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sale_id INTEGER NOT NULL,
+    product_id INTEGER,
+    product_name TEXT NOT NULL,
+    category TEXT,
+    quantity INTEGER NOT NULL,
+    price REAL NOT NULL,
+    FOREIGN KEY (sale_id) REFERENCES sales(id)
+  );
+
+  CREATE INDEX IF NOT EXISTS idx_sales_closed_at ON sales(closed_at);
+  CREATE INDEX IF NOT EXISTS idx_sale_items_sale ON sale_items(sale_id);
   CREATE INDEX IF NOT EXISTS idx_orders_table_status ON orders(table_id, status);
   CREATE INDEX IF NOT EXISTS idx_order_items_order ON order_items(order_id);
   CREATE INDEX IF NOT EXISTS idx_order_notes_order ON order_notes(order_id);
 `);
 
-  // Eski veritabanları: geçmiş siparişlerde kullanılan ürünler silinmek yerine arşivlenir
-  const productColumns = db.prepare("PRAGMA table_info(products)").all() as { name: string }[];
-  if (!productColumns.some((c) => c.name === "active")) {
-    db.exec("ALTER TABLE products ADD COLUMN active INTEGER NOT NULL DEFAULT 1");
-  }
+  // Eski veritabanlarına sonradan eklenen sütunlar
+  const addColumn = (table: string, column: string, definition: string) => {
+    const columns = db.prepare(`PRAGMA table_info(${table})`).all() as { name: string }[];
+    if (!columns.some((c) => c.name === column)) db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
+  };
+  // Geçmiş siparişlerde kullanılan ürünler silinmek yerine arşivlenir
+  addColumn("products", "active", "INTEGER NOT NULL DEFAULT 1");
+  // Ürünün istasyonu boşsa kategorinin istasyonu kullanılır
+  addColumn("products", "station_id", "INTEGER");
+  addColumn("categories", "station_id", "INTEGER");
+  // Fiş yazdırma: 'none' (kapalı), 'cashier' (kasa bilgisayarındaki yazıcı), 'device' (istasyon cihazının yazıcısı)
+  addColumn("stations", "print_mode", "TEXT NOT NULL DEFAULT 'none'");
+  addColumn("stations", "printer_name", "TEXT");
+  // İstasyon sipariş anında kaydedilir; menü sonradan değişse de hazırlanan fiş yer değiştirmez.
+  // prep_status: NULL (istasyonsuz ürün), 'pending' (hazırlanıyor), 'ready' (hazır), 'delivered' (garsona teslim edildi)
+  addColumn("order_items", "batch_id", "INTEGER");
+  addColumn("order_items", "station_id", "INTEGER");
+  addColumn("order_items", "prep_status", "TEXT");
+  addColumn("order_items", "delivered_at", "DATETIME");
+  addColumn("order_notes", "batch_id", "INTEGER");
+  db.exec("CREATE INDEX IF NOT EXISTS idx_order_items_station ON order_items(station_id, prep_status)");
 
-  const isEmpty = (table: string) => (db.prepare(`SELECT count(*) AS count FROM ${table}`).get() as { count: number }).count === 0;
+  // Başlangıç verileri yalnızca ilk kurulumda eklenir (ayarlar tablosu boşken). Sonradan silinen
+  // kategori ve masalar yeniden açılışta geri gelmez. Menü boş başlar; ürünler işletme tarafından girilir.
+  const isFirstRun = (db.prepare("SELECT count(*) AS count FROM settings").get() as { count: number }).count === 0;
+  if (!isFirstRun) return;
 
-  if (isEmpty("settings")) {
-    const insert = db.prepare("INSERT INTO settings (key, value) VALUES (?, ?)");
-    insert.run("restaurant_name", "DigiTab POS");
-    insert.run("manager_name", "Kasa Yöneticisi");
-  }
-  if (isEmpty("tables")) {
+  const setting = db.prepare("INSERT INTO settings (key, value) VALUES (?, ?)");
+  setting.run("restaurant_name", "DigiTab POS");
+  setting.run("manager_name", "Kasa Yöneticisi");
+
+  if ((db.prepare("SELECT count(*) AS count FROM tables").get() as { count: number }).count === 0) {
     const insert = db.prepare("INSERT INTO tables (name) VALUES (?)");
     for (let i = 1; i <= 10; i++) insert.run(`Table ${i}`);
   }
-  if (isEmpty("categories")) {
+  if ((db.prepare("SELECT count(*) AS count FROM categories").get() as { count: number }).count === 0) {
     const insert = db.prepare("INSERT INTO categories (name) VALUES (?)");
     ["İçecekler", "Yemekler", "Tatlılar"].forEach((name) => insert.run(name));
-  }
-  if (isEmpty("products")) {
-    const insert = db.prepare("INSERT INTO products (name, price, category) VALUES (?, ?, ?)");
-    const defaults: [string, number, string][] = [
-      ["Kola", 30, "İçecekler"], ["Ayran", 20, "İçecekler"], ["Su", 10, "İçecekler"],
-      ["Burger", 150, "Yemekler"], ["Pizza", 200, "Yemekler"], ["Salata", 80, "Yemekler"],
-      ["Künefe", 60, "Tatlılar"], ["Baklava", 50, "Tatlılar"],
-    ];
-    defaults.forEach((p) => insert.run(...p));
   }
 }
 

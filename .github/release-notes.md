@@ -24,10 +24,21 @@ Bilgisayarınıza uygun dosyayı aşağıdaki **Assets** bölümünden indirin:
 
 Bu uyarılar uygulamanın ücretli bir geliştirici sertifikasıyla imzalanmamış olmasından kaynaklanır. Yalnızca ilk açılışta görünür.
 
+## Yenilikler (1.1.0)
+
+- **İstasyonlar:** Siparişler ocak, içecek, tatlı gibi istasyonlara otomatik düşer. Her istasyonun kendi ekranı vardır; masa no, adet, not ve geçen süre görünür.
+- **Hazır bildirimi:** İstasyon "Hazır" deyince garson telefonu ses ve titreşimle uyarır, garson "Teslim Aldım" ile onaylar.
+- **Kasa ve günlük satışlar:** Masa kapatılırken alınan tutar ve ödeme türü (nakit/kart) girilir. Satışlar sayfasında günlük tahsilat ve ürün bazlı satışlar görünür.
+- **İstasyon fişi yazdırma:** 80 mm termal yazıcıdan fiş basılır. Fiş tasarımı Ayarlar > Fiş sekmesinden düzenlenir.
+- **Yeni görünüm:** Daha sade renkler ve ikonlar.
+
 ## İlk kullanım
 
-1. İlk açılışta güvenlik duvarı "gelen bağlantılara izin verilsin mi?" diye sorarsa **İzin Ver**'i seçin. Bu izin olmadan garson telefonları bağlanamaz.
-2. **Ayarlar** (⚙️) sayfasında restoran adınızı ve masa sayınızı girin.
-3. Garsonlar aynı Wi-Fi ağındaki telefonlarıyla Ayarlar sayfasındaki **QR kodu** okutarak bağlanır.
+1. İlk açılışta güvenlik duvarı "gelen bağlantılara izin verilsin mi?" diye sorarsa **İzin Ver**'i seçin. Bu izin olmadan garson telefonları ve istasyon ekranları bağlanamaz.
+2. **Ayarlar** sayfasında restoran adınızı ve masa sayınızı girin.
+3. **Menü** sayfasında ürünlerinizi ve fiyatlarını ekleyin. Menü boş gelir.
+4. İsterseniz **İstasyonlar** sayfasında istasyonları oluşturun ve menüde kategorilere atayın.
+5. Fiş yazıcısı kullanacaksanız **Ayarlar > Fiş** sekmesinden yazıcıyı seçip test fişi basın.
+6. Garsonlar aynı Wi-Fi ağındaki telefonlarıyla Ayarlar sayfasındaki **QR kodu** okutarak bağlanır.
 
 Verileriniz yalnızca bu bilgisayarda saklanır. Ayarlar sayfasındaki **Şimdi Yedekle** düğmesiyle düzenli yedek almanız önerilir.

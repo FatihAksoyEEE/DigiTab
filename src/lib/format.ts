@@ -1,4 +1,5 @@
-export const formatPrice = (value: number) => `₺${Number(value).toFixed(2)}`;
+// Eksi işareti para biriminden önce yazılır: -₺80.00
+export const formatPrice = (value: number) => `${value < 0 ? "-" : ""}₺${Math.abs(Number(value)).toFixed(2)}`;
 
 // SQLite CURRENT_TIMESTAMP değerleri UTC olarak saklanır
 export const formatTime = (sqliteUtc: string) =>

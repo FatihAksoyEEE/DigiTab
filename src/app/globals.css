@@ -1,56 +1,102 @@
 @import "tailwindcss";
 
+/*
+ * Tema: sıcak grafit nötrler + mürekkep rengi ana eylem.
+ * Durum renkleri (onay, tehlike, uyarı, bilgi) düşük doygunlukta tutulur.
+ * Her durum için iki ton vardır: düz zemin (buton, nokta, şeffaf rozet) ve "-ink" (zemin üstünde yazı).
+ */
 :root {
-    --background: #f8fafc;
-    --foreground: #0f172a;
+    --background: #f5f4f1;
+    --foreground: #1d1c1a;
     --surface: #ffffff;
-    --surface-secondary: #f1f5f9;
-    --surface-hover: #e2e8f0;
-    --border-color: #e2e8f0;
-    --sidebar-bg: #ffffff;
-    --card-bg: rgba(241, 245, 249, 0.6);
-    --card-border: rgba(203, 213, 225, 0.5);
-    --text-primary: #0f172a;
-    --text-secondary: #475569;
-    --text-muted: #94a3b8;
+    --surface-secondary: #efede9;
+    --surface-hover: #e7e4df;
+    --border-color: #e2dfd9;
+    --sidebar-bg: #fbfaf8;
+    --card-bg: #fbfaf8;
+    --card-border: #e2dfd9;
+    --text-primary: #1d1c1a;
+    --text-secondary: #5b5750;
+    --text-muted: #8f8a82;
     --input-bg: #ffffff;
-    --input-border: #cbd5e1;
-    --table-free-bg: rgba(241, 245, 249, 0.8);
-    --table-free-border: rgba(203, 213, 225, 0.5);
-    --table-occupied-bg: rgba(254, 226, 226, 0.5);
-    --table-occupied-border: rgba(252, 165, 165, 0.5);
-    --header-bg: #ffffff;
-    --order-panel-bg: #f8fafc;
+    --input-border: #d6d2cb;
+    --table-free-bg: #ffffff;
+    --table-free-border: #e2dfd9;
+    --table-occupied-bg: #f8ece8;
+    --table-occupied-border: #e2bdb3;
+    --header-bg: #fbfaf8;
+    --order-panel-bg: #f9f8f5;
+
+    --accent: #1d1c1a;
+    --accent-hover: #3a3834;
+    --accent-fg: #ffffff;
+    --success: #2f6b4f;
+    --success-hover: #275a42;
+    --success-ink: #2f6b4f;
+    --danger: #a83f34;
+    --danger-hover: #8f352b;
+    --danger-ink: #a83f34;
+    --warning: #b07a1e;
+    --warning-ink: #85590f;
+    --info: #3c5a7a;
+    --info-ink: #3c5a7a;
 }
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 .dark {
-    --background: #0b1120;
-    --foreground: #e2e8f0;
-    --surface: #111b33;
-    --surface-secondary: #0f1729;
-    --surface-hover: #1e293b;
-    --border-color: #1e293b;
-    --sidebar-bg: #0a0f1e;
-    --card-bg: rgba(30, 41, 59, 0.3);
-    --card-border: rgba(51, 65, 85, 0.5);
-    --text-primary: #e2e8f0;
-    --text-secondary: #94a3b8;
-    --text-muted: #64748b;
-    --input-bg: rgba(15, 23, 42, 0.5);
-    --input-border: #334155;
-    --table-free-bg: rgba(30, 41, 59, 0.4);
-    --table-free-border: rgba(51, 65, 85, 0.5);
-    --table-occupied-bg: rgba(159, 18, 57, 0.15);
-    --table-occupied-border: rgba(244, 63, 94, 0.4);
-    --header-bg: #0b1120;
-    --order-panel-bg: #0f1729;
+    --background: #151514;
+    --foreground: #ebe9e4;
+    --surface: #1e1e1c;
+    --surface-secondary: #1a1a18;
+    --surface-hover: #2a2926;
+    --border-color: #2c2b28;
+    --sidebar-bg: #121211;
+    --card-bg: #1b1b19;
+    --card-border: #2c2b28;
+    --text-primary: #ebe9e4;
+    --text-secondary: #a19d95;
+    --text-muted: #726e67;
+    --input-bg: #1a1a18;
+    --input-border: #3a3834;
+    --table-free-bg: #1e1e1c;
+    --table-free-border: #2c2b28;
+    --table-occupied-bg: #2a1e1b;
+    --table-occupied-border: #6a3a31;
+    --header-bg: #151514;
+    --order-panel-bg: #1a1a18;
+
+    --accent: #ebe9e4;
+    --accent-hover: #d4d1ca;
+    --accent-fg: #151514;
+    --success: #3d7a5a;
+    --success-hover: #346b4e;
+    --success-ink: #86bb9c;
+    --danger: #a5463b;
+    --danger-hover: #923d33;
+    --danger-ink: #e08a7f;
+    --warning: #b8862e;
+    --warning-ink: #d9b169;
+    --info: #4a6a8f;
+    --info-ink: #9cb4d1;
 }
 
 @theme {
     --color-background: var(--background);
     --color-foreground: var(--foreground);
+    --color-accent: var(--accent);
+    --color-accent-hover: var(--accent-hover);
+    --color-accent-fg: var(--accent-fg);
+    --color-success: var(--success);
+    --color-success-hover: var(--success-hover);
+    --color-success-ink: var(--success-ink);
+    --color-danger: var(--danger);
+    --color-danger-hover: var(--danger-hover);
+    --color-danger-ink: var(--danger-ink);
+    --color-warning: var(--warning);
+    --color-warning-ink: var(--warning-ink);
+    --color-info: var(--info);
+    --color-info-ink: var(--info-ink);
 }
 
 @layer components {
@@ -66,5 +112,10 @@
         background: var(--input-bg);
         border: 1px solid var(--input-border);
         color: var(--text-primary);
+    }
+
+    .field:focus {
+        outline: 2px solid var(--accent);
+        outline-offset: -1px;
     }
 }

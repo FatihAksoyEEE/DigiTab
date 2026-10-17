@@ -11,13 +11,18 @@ export function getSocket(): Socket {
 }
 
 /** Olayı sunucuya gönderir; başarısız olursa kullanıcıya hatayı gösterir. */
-export async function send(event: string, data?: object): Promise<boolean> {
+export async function send(event: string, data?: object, timeout = 5000): Promise<boolean> {
+    return (await request(event, data, timeout)).ok;
+}
+
+/** Olayı gönderir ve sunucunun döndürdüğü yanıtı (varsa verisiyle) verir; hata kullanıcıya gösterilir. */
+export async function request(event: string, data?: object, timeout = 5000): Promise<Result> {
     let res: Result;
     try {
-        res = await getSocket().timeout(5000).emitWithAck(event, data);
+        res = await getSocket().timeout(timeout).emitWithAck(event, data);
     } catch {
         res = { ok: false, error: "Sunucuya ulaşılamadı." };
     }
     if (!res.ok) alert(res.error);
-    return res.ok;
+    return res;
 }

@@ -20,7 +20,7 @@ jobs:
             target: --mac
           - os: windows-latest
             # Hazır modül aşağıda indirildiği için kaynak koddan derleme atlanır
-            target: --win -c.npmRebuild=false
+            target: --win --config.npmRebuild=false
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4

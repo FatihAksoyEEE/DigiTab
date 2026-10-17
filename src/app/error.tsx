@@ -13,13 +13,13 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#0b1120]">
-      <div className="text-center p-8 rounded-2xl bg-slate-800/50 border border-red-500/30 max-w-md">
-        <h2 className="text-2xl font-bold text-red-400 mb-4">Bir Hata Oluştu</h2>
-        <p className="text-slate-400 mb-6">{error.message}</p>
+    <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--background)" }}>
+      <div className="card text-center p-8 rounded-2xl border-danger/30 max-w-md">
+        <h2 className="text-2xl font-bold text-danger-ink mb-4">Bir Hata Oluştu</h2>
+        <p className="mb-6" style={{ color: "var(--text-secondary)" }}>{error.message}</p>
         <button
           onClick={reset}
-          className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+          className="px-6 py-2 bg-accent hover:bg-accent-hover text-accent-fg rounded-lg transition-colors"
         >
           Tekrar Dene
         </button>
