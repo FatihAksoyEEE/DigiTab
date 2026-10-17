@@ -1,6 +1,6 @@
 {
   "name": "billing_system",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Restoran ve kafeler için yerel ağda çalışan adisyon sistemi",
   "author": "Fatih Aksoy",
   "main": "main.js",

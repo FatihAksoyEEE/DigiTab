@@ -19,7 +19,8 @@ jobs:
           - os: macos-latest
             target: --mac
           - os: windows-latest
-            target: --win
+            # Hazır modül aşağıda indirildiği için kaynak koddan derleme atlanır
+            target: --win -c.npmRebuild=false
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -33,8 +34,35 @@ jobs:
       - run: npm run build
       - run: npm run electron:build:server
 
+      # electron-builder bu Electron sürümünün hazır better-sqlite3 derlemesini bulamayıp kaynak
+      # koddan derlemeye çalışıyor; Windows'ta resmî hazır derlemeyi doğrudan indiriyoruz
+      - name: better-sqlite3 Windows modülünü indir
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          ABI=$(ELECTRON_RUN_AS_NODE=1 npx electron -p process.versions.modules)
+          VER=$(node -p "require('better-sqlite3/package.json').version")
+          curl -sSLf "https://github.com/WiseLibs/better-sqlite3/releases/download/v$VER/better-sqlite3-v$VER-electron-v$ABI-win32-x64.tar.gz" \
+            | tar xz -C node_modules/better-sqlite3
+          rm -f node_modules/better-sqlite3/build/Release/test_extension.node
+
       - name: Kurulum dosyalarını derle
         run: npx electron-builder ${{ matrix.target }} --publish never
+
+      # Paketlenmiş uygulamayı başlatır; /dashboard veritabanından okuduğu için yanıt vermesi
+      # yerel modülün bu işletim sisteminde çalıştığını gösterir. Başarısız olursa yayın yapılmaz.
+      - name: Paketlenmiş uygulamayı test et
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" = "Windows" ]; then APP="dist/win-unpacked/DigiTab POS.exe"; else APP="dist/mac-arm64/DigiTab POS.app/Contents/MacOS/DigiTab POS"; fi
+          "$APP" > app.log 2>&1 &
+          for i in $(seq 1 60); do
+            if curl -sf -o /dev/null http://localhost:3000/dashboard; then OK=1; break; fi
+            sleep 2
+          done
+          cat app.log
+          if [ "$RUNNER_OS" = "Windows" ]; then taskkill //F //IM "DigiTab POS.exe" || true; else pkill -f "DigiTab POS" || true; fi
+          [ "$OK" = 1 ] && echo "Uygulama çalışıyor" || { echo "Uygulama başlatılamadı"; exit 1; }
 
       - uses: actions/upload-artifact@v4
         with:

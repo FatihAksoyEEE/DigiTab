@@ -1,10 +1,11 @@
 import { createServer, IncomingMessage } from "http";
 import next from "next";
 import { Server } from "socket.io";
-import db, { backupDatabase } from "./src/lib/db";
+import { backupDatabase, getDb } from "./src/lib/db";
 import { getLanAddresses, isLocalAddress } from "./src/lib/network";
 import type { Result } from "./src/lib/types";
 
+const db = getDb();
 const dev = process.env.NODE_ENV !== "production";
 const PORT = Number(process.env.PORT) || 3000;
 const app = next({ dev, dir: __dirname });

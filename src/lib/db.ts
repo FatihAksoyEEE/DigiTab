@@ -3,14 +3,27 @@ import fs from "fs";
 import path from "path";
 
 // Electron'da DB_PATH, kullanıcı veri klasörünü gösterir; aksi halde proje kökündeki sqlite.db kullanılır
-const dbPath = process.env.DB_PATH || path.resolve(process.cwd(), "sqlite.db");
-const db = new Database(dbPath);
+const dbPath = () => process.env.DB_PATH || path.resolve(process.cwd(), "sqlite.db");
 
-db.pragma("journal_mode = WAL");
-db.pragma("foreign_keys = ON");
-db.pragma("busy_timeout = 5000");
+let db: Database.Database | null = null;
 
-db.exec(`
+/** Veritabanını ilk kullanımda açar; `next build` gibi yalnızca modülü yükleyen işlemler dosyaya dokunmaz. */
+export function getDb(): Database.Database {
+  if (!db) db = open(dbPath());
+  return db;
+}
+
+function open(file: string): Database.Database {
+  const db = new Database(file, { timeout: 10_000 });
+  db.pragma("journal_mode = WAL");
+  db.pragma("foreign_keys = ON");
+  // IMMEDIATE: aynı anda açan başka bir süreç varsa sırasını bekler, başlangıç verisi iki kez eklenmez
+  db.transaction(() => setup(db)).immediate();
+  return db;
+}
+
+function setup(db: Database.Database) {
+  db.exec(`
   CREATE TABLE IF NOT EXISTS settings (
     key TEXT PRIMARY KEY,
     value TEXT
@@ -68,15 +81,14 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_order_notes_order ON order_notes(order_id);
 `);
 
-// Eski veritabanları: geçmiş siparişlerde kullanılan ürünler silinmek yerine arşivlenir
-const productColumns = db.prepare("PRAGMA table_info(products)").all() as { name: string }[];
-if (!productColumns.some((c) => c.name === "active")) {
-  db.exec("ALTER TABLE products ADD COLUMN active INTEGER NOT NULL DEFAULT 1");
-}
+  // Eski veritabanları: geçmiş siparişlerde kullanılan ürünler silinmek yerine arşivlenir
+  const productColumns = db.prepare("PRAGMA table_info(products)").all() as { name: string }[];
+  if (!productColumns.some((c) => c.name === "active")) {
+    db.exec("ALTER TABLE products ADD COLUMN active INTEGER NOT NULL DEFAULT 1");
+  }
 
-const isEmpty = (table: string) => (db.prepare(`SELECT count(*) AS count FROM ${table}`).get() as { count: number }).count === 0;
+  const isEmpty = (table: string) => (db.prepare(`SELECT count(*) AS count FROM ${table}`).get() as { count: number }).count === 0;
 
-db.transaction(() => {
   if (isEmpty("settings")) {
     const insert = db.prepare("INSERT INTO settings (key, value) VALUES (?, ?)");
     insert.run("restaurant_name", "DigiTab POS");
@@ -99,23 +111,21 @@ db.transaction(() => {
     ];
     defaults.forEach((p) => insert.run(...p));
   }
-})();
+}
 
 const MAX_BACKUPS = 20;
 
 /** WAL içeriği dahil tutarlı bir kopya alır ve yalnızca son MAX_BACKUPS yedeği saklar. */
 export async function backupDatabase(): Promise<string> {
-  const backupDir = path.join(path.dirname(dbPath), "backups");
+  const backupDir = path.join(path.dirname(dbPath()), "backups");
   fs.mkdirSync(backupDir, { recursive: true });
 
   const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
   const backupPath = path.join(backupDir, `sqlite-backup-${timestamp}.db`);
-  await db.backup(backupPath);
+  await getDb().backup(backupPath);
 
   const old = fs.readdirSync(backupDir).filter((f) => f.startsWith("sqlite-backup-")).sort().slice(0, -MAX_BACKUPS);
   old.forEach((f) => fs.unlinkSync(path.join(backupDir, f)));
 
   return backupPath;
 }
-
-export default db;
